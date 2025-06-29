@@ -8,14 +8,6 @@ jobs:
         job_name: ['macos']
 
         include:
-        - job_name: linux
-          os: ubuntu-latest
-          shell: bash {0}
-
-        - job_name: windows
-          os: windows-latest
-          shell: msys2 {0}
-
         - job_name: macos
           os: macos-latest
           shell: bash {0}
@@ -27,22 +19,13 @@ jobs:
     name: hactool-${{ matrix.job_name }}
     runs-on: ${{ matrix.os }}
 
-    steps:
-    - uses: msys2/setup-msys2@v2
-      if: matrix.os == 'windows-latest'
-      with:
-        path-type: inherit
-        msystem: MINGW64
-        update: true
-        install: mingw-w64-x86_64-gcc mingw-w64-x86_64-make
-
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v4.2.2
 
     - run: |
         mv config.mk.template config.mk
         make -j$(nproc)
 
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v4.6.2
       with:
         name: hactool-${{ matrix.job_name }}
         path: hactool*
