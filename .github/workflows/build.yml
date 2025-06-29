@@ -5,7 +5,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        job_name: ['linux', 'windows', 'macos']
+        job_name: ['macos']
 
         include:
         - job_name: linux
