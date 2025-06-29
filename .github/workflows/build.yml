@@ -1,31 +1,21 @@
 on: [push, pull_request]
 
 jobs:
-  main:
-    strategy:
-      fail-fast: false
-      matrix:
-        job_name: ['macos']
+  build:
+    name: hactool-macos
+    runs-on: macos-latest
 
-        include:
-        - job_name: macos
-          os: macos-latest
-          shell: bash {0}
+    steps:
+      - uses: actions/checkout@v4.2.2
 
-    defaults:
-      run:
-        shell: ${{ matrix.shell }}
+      - name: Build hactool
+        shell: bash
+        run: |
+          mv config.mk.template config.mk
+          make -j$(sysctl -n hw.ncpu)
 
-    name: hactool-${{ matrix.job_name }}
-    runs-on: ${{ matrix.os }}
-
-    - uses: actions/checkout@v4.2.2
-
-    - run: |
-        mv config.mk.template config.mk
-        make -j$(nproc)
-
-    - uses: actions/upload-artifact@v4.6.2
-      with:
-        name: hactool-${{ matrix.job_name }}
-        path: hactool*
+      - name: Upload hactool binary
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: hactool-macos
+          path: hactool*
